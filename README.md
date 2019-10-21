@@ -37,3 +37,48 @@ record given.
 
 This will enable the dataset owners to make better decisions on what records to remove based
 on what expert classifers have done.
+
+# Reaserch Proccess
+
+#### Put this into the README.md file:
+## Objectives:
+<ol>
+    <li>Name attributes and describe characteristics.</li>
+    <ul>
+        <li>% of Nulls</li>
+        <li>Type of data. ie String, int, float</li>
+        <li>Noise present. Such as outliers, logistic, rounding errors</li>
+        <li>What is useful what isn't and why</li>
+        <li>Type of distribution. </li>
+    </ul>
+    <li>Identifying Label data</li>
+    <li>Visualization of data</li>
+    <li>Identify correlations between variables</li>
+    <li>Propose how the problem would be solved manually</li>
+    <li>Provide transformations if nessiary</li>
+    <li>Anything else of interest</li>
+</ol>
+
+## Exploritory data Strategy
+The nature of the dataset is complex. This is due to the descriptive attirbutes assocatied with properites and cemetaries. There are only a couple of real numerical datatypes such as lat and long. I intend to go through each type figuring out if it is catagorical, a string/text, or numerical. Once the catagroies are identified applying a numerical number scheme for them will be adopted. 
+
+### Questions:
+Can I even descrptive statstics on catagorical data? From Comer's class I remember there beng some very strang things that happened.
+What do I even do with the catagorical data?
+
+# Models
+<ol>
+    <li>Turn everything into text and concatenate all attributes into one string, apply TF-IDF and cosine similarity, then run model.</li>
+    <ul>
+        <li><b>Notes</b></li>
+        <ul>
+            <li>I do not know how and if I need to do describptive stats on the vectors of the strings</li>
+        </ul>
+    </ul>
+    <li>Exploritiory driven modeling</li>
+    <ul>
+        <li>Convert individual columns into vectors</li>
+        <li>PCA (principle compoent analysis vectors and drop relivant columns</li>
+        <li>Train model</li>
+    </ul>
+    <li></li>
