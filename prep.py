@@ -1,5 +1,10 @@
 import pandas as pd
 import numpy as np
+from sklearn.feature_extraction.text import TfidVectorizer
+from scipy import hstack
+import re
+
+
 
 def fill_empty():
 	'''fill_empty takes the arugment df (dataframe)
@@ -19,4 +24,17 @@ def fill_others():
 		return 'No Data'
 	elif x == 
 
+def prep(df):
+	'''prep is used for vectorizing the data 
+	so that it can be used in a machine learning model.
 
+	'''
+	def ngrams(string, n=3):
+		'''This method both cleans special characters
+		out of the strings and prepares themm for being
+		proccessed by the TF-IDF'''
+		string = re.sub(r',-./&',r'', string)
+		ngrams = zip(*[string[i:] for in in range(n)])
+		return [''.join(ngram) for ngram in ngrams]
+
+	
