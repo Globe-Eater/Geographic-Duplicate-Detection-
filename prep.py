@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.feature_extraction.text import TfidVectorizer
+#from sklearn.feature_extraction.text import TfidVectorizer
 from scipy import hstack
 import re
 
@@ -22,7 +22,7 @@ def fill_others():
 	'''
 	if x == 0 or '00':
 		return 'No Data'
-	elif x == 
+	#elif x == 
 
 def prep(df):
 	'''prep is used for vectorizing the data 
@@ -34,7 +34,7 @@ def prep(df):
 		out of the strings and prepares themm for being
 		proccessed by the TF-IDF'''
 		string = re.sub(r',-./&',r'', string)
-		ngrams = zip(*[string[i:] for in in range(n)])
+		ngrams = zip(*[string[i:] for i in range(n)])
 		return [''.join(ngram) for ngram in ngrams]
 
 	
