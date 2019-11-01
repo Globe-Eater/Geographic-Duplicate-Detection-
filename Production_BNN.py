@@ -15,8 +15,15 @@ import pandas as pd
 from datetime import datetime
 from sklearn.model_selection import train_test_split
 # Still working on this:
-from Preproccessing import preproccessing
+from prep import *
+from paths import pathname
 
+df = pd.read_csv(pathname())
+df = df.fillna(value='No Data',axis=1)
+
+df.info()
+
+exit()
 # Create Directory for Tensorboard analysis
 # Experiement with a better time based format!
 now = datetime.utcnow().strftime("%Y%m%d%H%M%S")
@@ -33,7 +40,7 @@ df_train, df_test = train_test_split(df, test_size = 0.2, random_state = 42)
 df_train = preproccessing(df_train)
 df_test = preproccessing(df_test)
 
-labels = 
+labels = None 
 
 # Inputs
 training_epochs = 10
