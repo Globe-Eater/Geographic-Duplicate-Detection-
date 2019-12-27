@@ -1,11 +1,4 @@
-import pandas as pd
 import numpy as np
-#from sklearn.feature_extraction.text import TfidVectorizer
-from scipy import hstack
-import re
-from sklearn.model_selection import train_test_split
-import re
-import pandas as pd
 
 def fill_empty(df):
     '''fill_empty takes the arugment df (dataframe)
@@ -15,10 +8,10 @@ def fill_empty(df):
     '''
     df = df.replace(r'^\s*$', np.nan, regex=True)
     df = df.fillna(Filled_value="No Data")
-    assert df , 'DataFrame has not loaded in try again.'
+    assert df, 'DataFrame has not loaded in try again.'
     return df
 
-def checkNumbers(lat, long):
+def check_numbers(lat, long):
     '''This method is to make sure that the lats and longs are within the state of Oklahoma.
     inputs: df['Lat', 'long']]
     output "Everything should be within Oklahoma.
@@ -33,7 +26,6 @@ def prep(df):
     Order of OPS:
     Convert fields like duplicate_check from text to
     1 or 0. 
-    Train Test split. 
     '''
     df = df[['OBJECTID', 'ADDRESS', 'RESNAME', 'Lat', 'Long', 'duplicate_check']]
     def labels(duplicate_check):
@@ -42,5 +34,7 @@ def prep(df):
         within the dataset.'''
         if duplicate_check == 'good':
             return 0
-        else:
+        elif duplicate_check == 'poss_dup':
             return 1
+    df['duplicate_check'] = df['duplicate_check'].apply(labels)
+    return df
