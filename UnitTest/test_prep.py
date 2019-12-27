@@ -1,5 +1,6 @@
 import unittest
-import prep
+import sys
+sys.path.insert(1, '/Users/kellenbullock/desktop/shpo/Neural_networks/Production/prep.py')
 
 class Testprep(unittest.TestCase):
     '''This testing python program is made for prep.py to ensure all train-test-split methods are working as intended
