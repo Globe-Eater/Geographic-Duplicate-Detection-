@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_excel('Oklahoma.xls')
-
 def uniques(df):
 	'''I am using this method so I do not have to write df.column_name.uniques
 	67 times. 
