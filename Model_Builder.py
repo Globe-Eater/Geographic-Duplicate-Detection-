@@ -1,6 +1,7 @@
 import numpy as np
 import sklearn as sk
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 # Load the data in:
 def start():
@@ -16,7 +17,7 @@ def preprocess(df):
     
     def ngrams(string, n=3):
         string = re.sub(r',-./&',r'', string)
-        ngrams = zip(*[string[i:] for i nin range(n)])
+        ngrams = zip(*[string[i:] for i in range(n)])
         return [''.join(ngram) for ngram in ngrams]
 
     def vectorize(x):
@@ -32,29 +33,31 @@ def fetch_batch(epoch, batch_index, batch_size):
     and randomly selects a subset of the dataset. It then cuts the indices and returns it to the model."""
     np.random.seed(epoch * n_batches + batch_index)
     indices = np.random.randint(m, size=batch_size)
-    X_batch = train_X[indices]
-    Y_batch = train_y.reshape(-1, 1)[indices]
+    X_batch = X_train[indices]
+    Y_batch = y_train.reshape(-1, 1)[indices]
     return X_batch, y_batch
 
 df = pd.read_excel('datasets/prepared_data/Oklahoma_Working.xls') # Delete this later just right now it is just to save time.
  
 # Train_set, Testing_Set split:
-train_X, train_y, test_X, test_y = sklearn.cross_validation.train_test_split(df, test_size=0.2, random_state=42)
+X = df[['ObjectID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
+y = df[['duplicate_check']]
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Handle Object ID,
 Eval_ObjectID = test_X['ObjectID']
 
 # Drop all other information from Label data:
-train_y = train_y.drop(columns=['PROPNAME', 'RESNAME', 'ADDRESS', 'OBJECTID', 'Lat', 'Long']
-test_y = test_y.drop(columns=['PROPNAME', 'RESNAME', 'ADDRESS', 'OBJECTID', 'Lat', 'Long']
+y_train = y_train.drop(columns=['PROPNAME', 'RESNAME', 'ADDRESS', 'OBJECTID', 'Lat', 'Long'])
+y_test = y_test.drop(columns=['PROPNAME', 'RESNAME', 'ADDRESS', 'OBJECTID', 'Lat', 'Long'])
 
 # Convert to Vectors
-preproccess(train_X)
-preprocess(test_X)
+preproccess(X_train)
+preprocess(X_test)
 
 # Construction Phase for TF
-feature_count = train_x.shape[0]
-label_count = train_y.shape[0]
+feature_count = X_train.shape[0]
+label_count = y_train.shape[0]
 
 training_epochs = 10 # This will absoutely be played with during testing.
 learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
@@ -71,7 +74,7 @@ optimizer = tf.trainGradientDescentOptimizer(learning_rate=learning_rate)
 training_op = optimizer.minimize(mse)
 
 init = tf.global_variables_initializer()
-save = tf.train.Saver()
+# save = tf.train.Saver() Turn this on when ready!
 
 batch_size = 100
 n_batches = int(np.ceil(m / batch_size))
