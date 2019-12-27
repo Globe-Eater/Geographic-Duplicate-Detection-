@@ -15,6 +15,7 @@ def fill_empty(df):
     '''
     df = df.replace(r'^\s*$', np.nan, regex=True)
     df = df.fillna(Filled_value="No Data")
+    assert df , 'DataFrame has not loaded in try again.'
     return df
 
 def checkNumbers(lat, long):
