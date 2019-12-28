@@ -32,7 +32,7 @@ def prep(df):
     Convert fields like duplicate_check from text to
     1 or 0. 
     '''
-    df = df[['OBJECTID', 'ADDRESS', 'RESNAME', 'Lat', 'Long', 'duplicate_check']]
+    df = df[['OBJECTID', 'PROPNAME', 'ADDRESS', 'RESNAME', 'Lat', 'Long', 'duplicate_check']]
     def labels(duplicate_check):
         '''This method is to be applied to the dataframe df, that has a column duplicate_check in it.
         This is being used to convert poss_dup to 1 or good to 0. Later this will be expanded to cover anything else

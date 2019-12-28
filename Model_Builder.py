@@ -2,19 +2,13 @@ import numpy as np
 import sklearn as sk
 import pandas as pd
 from sklearn.model_selection import train_test_split
-
-# Load the data in:
-def start():
-    """This takes user input for the file name so this program can be used on any dataset that is given.
-    Usage example: 'datasets/prepared_data/Oklahoma_Working.xls'"""
-    df = pd.read_excel(input("Please enter the path location of the file to be trained:"))
-    return df
+from prep import start
 
 def preprocess(df):
     """This method takes the target dataframe and preprocesses it into vectors for the Algorithm to handle.
     """
     df = df[['PRONAME', 'ADDRESS', 'RESNAME']]
-    
+
     def ngrams(string, n=3):
         string = re.sub(r',-./&',r'', string)
         ngrams = zip(*[string[i:] for i in range(n)])
@@ -37,7 +31,7 @@ def fetch_batch(epoch, batch_index, batch_size):
     Y_batch = y_train.reshape(-1, 1)[indices]
     return X_batch, y_batch
 
-#df = pd.read_excel('datasets/prepared_data/Oklahoma_Working.xls') # Delete this later just right now it is just to save time.
+df = start()
 
 # Train_set, Testing_Set split:
 X = df[['OBJECTID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
@@ -45,7 +39,7 @@ y = df[['duplicate_check']]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Handle Object ID,
-Eval_ObjectID = test_X['ObjectID']
+Eval_ObjectID = test_X['OBJECTID']
 
 # Drop all other information from Label data:
 y_train = y_train.drop(columns=['PROPNAME', 'RESNAME', 'ADDRESS', 'OBJECTID', 'Lat', 'Long'])
