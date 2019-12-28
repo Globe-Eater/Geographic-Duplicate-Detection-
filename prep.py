@@ -13,7 +13,7 @@ def fill_empty(df):
         df = fill_empty(df)
     '''
     df = df.replace(r'^\s*$', np.nan, regex=True)
-    df = df.fillna("No Data")
+    df = df.fillna(value="No Data")
     return df
 
 def check_numbers(lat, long):
@@ -44,8 +44,27 @@ def prep(df):
     df['duplicate_check'].apply(labels)
     return df
 
+def saver(df):
+    '''This method is designed to ask the user if they want to save and if so where.
+    The arguments are for asking the user if they want to save, and the dataframe to
+    be saved.'''
+    user_input = input("Would you like to save y/n?: ")
+    question = True
+    while question:
+        if user_input == 'n':
+            break
+        elif user_input == 'y':
+            path = input('Please input a valid path and filename such as /path/to/file/.xlsx : ')
+            try:
+                df.to_excel(path)
+                print("File successfully saved.")
+                question = False
+            except FileNotFoundError:
+                print("Path was not found please try again")
+
 if __name__ == '__main__':
     data_frame = start()
     data_frame = fill_empty(data_frame)
     data_frame = prep(data_frame)
     data_frame.head()
+    saver(data_frame)
