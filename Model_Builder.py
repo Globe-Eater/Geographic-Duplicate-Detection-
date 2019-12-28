@@ -37,10 +37,10 @@ def fetch_batch(epoch, batch_index, batch_size):
     Y_batch = y_train.reshape(-1, 1)[indices]
     return X_batch, y_batch
 
-df = pd.read_excel('datasets/prepared_data/Oklahoma_Working.xls') # Delete this later just right now it is just to save time.
- 
+#df = pd.read_excel('datasets/prepared_data/Oklahoma_Working.xls') # Delete this later just right now it is just to save time.
+
 # Train_set, Testing_Set split:
-X = df[['ObjectID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
+X = df[['OBJECTID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
 y = df[['duplicate_check']]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
