@@ -1,4 +1,10 @@
 import numpy as np
+import pandas as pd
+
+def start():
+    '''This method is designed to read input in from the user.'''
+    df = pd.read_excel(input("Please enter the path for the data:"))
+    return df
 
 def fill_empty(df):
     '''fill_empty takes the arugment df (dataframe)
@@ -7,8 +13,7 @@ def fill_empty(df):
         df = fill_empty(df)
     '''
     df = df.replace(r'^\s*$', np.nan, regex=True)
-    df = df.fillna(Filled_value="No Data")
-    assert df, 'DataFrame has not loaded in try again.'
+    df = df.fillna("No Data")
     return df
 
 def check_numbers(lat, long):
@@ -36,5 +41,11 @@ def prep(df):
             return 0
         elif duplicate_check == 'poss_dup':
             return 1
-    df['duplicate_check'] = df['duplicate_check'].apply(labels)
+    df['duplicate_check'].apply(labels)
     return df
+
+if __name__ == '__main__':
+    data_frame = start()
+    data_frame = fill_empty(data_frame)
+    data_frame = prep(data_frame)
+    data_frame.head()
