@@ -1,6 +1,7 @@
 import unittest
-from Model_Builder import prepocess
-
+import sys
+sys.path.append('/users/kellenbullock/desktop/shpo/Neural_networks/production')
+from Model_Builder import preprocess, vectorizer
 
 class Test_Model_Builder(unittest.TestCase):
     '''This class is to test Model_Builder to ensure the machine learning framework works correctly.'''

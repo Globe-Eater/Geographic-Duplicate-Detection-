@@ -2,12 +2,13 @@ import numpy as np
 import sklearn as sk
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
 from prep import start
 
 def preprocess(df):
     """This method takes the target dataframe and preprocesses it into vectors for the Algorithm to handle.
     """
-    df = df[['PRONAME', 'ADDRESS', 'RESNAME']]
+    df = df[['PROPNAME', 'ADDRESS', 'RESNAME']]
 
     def ngrams(string, n=3):
         string = re.sub(r',-./&',r'', string)
@@ -39,15 +40,11 @@ y = df[['duplicate_check']]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Handle Object ID,
-Eval_ObjectID = test_X['OBJECTID']
-
-# Drop all other information from Label data:
-y_train = y_train.drop(columns=['PROPNAME', 'RESNAME', 'ADDRESS', 'OBJECTID', 'Lat', 'Long'])
-y_test = y_test.drop(columns=['PROPNAME', 'RESNAME', 'ADDRESS', 'OBJECTID', 'Lat', 'Long'])
+Eval_ObjectID = X_test['OBJECTID']
 
 # Convert to Vectors
-preproccess(X_train)
-preprocess(X_test)
+X_train = preprocess(X_train)
+X_test = preprocess(X_test)
 
 # Construction Phase for TF
 feature_count = X_train.shape[0]
@@ -86,3 +83,5 @@ with tf.Session() as sess:
     best_theta = theta.eval()
 
 print(best_theta)
+
+
