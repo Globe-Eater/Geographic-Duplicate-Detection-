@@ -1,6 +1,8 @@
+import re
 import numpy as np
 import sklearn as sk
 import pandas as pd
+import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from prep import start
@@ -18,7 +20,7 @@ def preprocess(df):
     def vectorize(x):
         """ This takes a dataframe that is of strings only and converts them into vectors. """
         vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams)
-        return vectorizer.fit_trainsform(x)
+        return vectorizer.fit_transform(x)
 
     return df.apply(vectorize)
 
@@ -32,56 +34,56 @@ def fetch_batch(epoch, batch_index, batch_size):
     Y_batch = y_train.reshape(-1, 1)[indices]
     return X_batch, y_batch
 
-df = start()
+if __name__ == '__main__':
+    df = start()
 
-# Train_set, Testing_Set split:
-X = df[['OBJECTID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
-y = df[['duplicate_check']]
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    # Train_set, Testing_Set split:
+    X = df[['OBJECTID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
+    y = df[['duplicate_check']]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Handle Object ID,
-Eval_ObjectID = X_test['OBJECTID']
+    # Handle Object ID,
+    Eval_ObjectID = X_test['OBJECTID']
 
-# Convert to Vectors
-X_train = preprocess(X_train)
-X_test = preprocess(X_test)
+    # Convert to Vectors
+    X_train = preprocess(X_train)
+    X_test = preprocess(X_test)
 
-# Construction Phase for TF
-feature_count = X_train.shape[0]
-label_count = y_train.shape[0]
+    n = X_train.shape
+    
+    # Construction Phase for TF
+    feature_count = X_train.shape[0]
+    label_count = y_train.shape[0]
 
-training_epochs = 10 # This will absoutely be played with during testing.
-learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
-hidden_layers = feature_count -1
-cost_history = np.empty(shape=[1], dtype=float)
+    training_epochs = 10 # This will absoutely be played with during testing.
+    learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
+    hidden_layers = feature_count - 1
+    cost_history = np.empty(shape=[1], dtype=float)
 
-X = tf.placeholder(tf.float32, shape=(None, feature_count), name="X")
-Y = tf.placeholder(tf.float32, shape=(None, label_count), name="Y")
-theta = tf.Varaible(tf.random_uniform([n + 1, 1], -1.0, 1.0, seed=42), name="theta")
-y_pred = tf.matmul(X, theta, name="predictions")
-error = y_pred - y
-mse = tf.reduce_mean(tf.square(error), name="mse")
-optimizer = tf.trainGradientDescentOptimizer(learning_rate=learning_rate)
-training_op = optimizer.minimize(mse)
+    X = tf.placeholder(tf.float32, shape=(None, feature_count), name="X")
+    Y = tf.placeholder(tf.float32, shape=(None, label_count), name="Y")
+    theta = tf.Variable(tf.random_uniform([n + 1, 1], -1.0, 1.0, seed=42), name="theta")
+    y_pred = tf.matmul(X, theta, name="predictions")
+    error = y_pred - y
+    mse = tf.reduce_mean(tf.square(error), name="mse")
+    optimizer = tf.trainGradientDescentOptimizer(learning_rate=learning_rate)
+    training_op = optimizer.minimize(mse)
 
-init = tf.global_variables_initializer()
-# save = tf.train.Saver() Turn this on when ready!
+    init = tf.global_variables_initializer()
+    # save = tf.train.Saver() Turn this on when ready!
 
-batch_size = 100
-n_batches = int(np.ceil(m / batch_size))
+    batch_size = 100
+    n_batches = int(np.ceil(m / batch_size))
 
-# Run TF
-with tf.Session() as sess:
-    sess.run(init)
+    # Run TF
+    with tf.Session() as sess:
+        sess.run(init)
 
-    for epoch in range(n_epochs):
-        for batch_index in range(n_batches):
-            X_batch, y_batch = fetch_batch(epcoh, batch_index, batch_size)
-            sess.run(training_op, feed_dict={X: X_batch, y: y_batch})
+        for epoch in range(n_epochs):
+            for batch_index in range(n_batches):
+                X_batch, y_batch = fetch_batch(epcoh, batch_index, batch_size)
+                sess.run(training_op, feed_dict={X: X_batch, y: y_batch})
 
+        best_theta = theta.eval()
 
-    best_theta = theta.eval()
-
-print(best_theta)
-
-
+    print(best_theta)
