@@ -20,13 +20,10 @@ class Testprep(unittest.TestCase):
         
 
     def test_checknumbers(self):
+        pass
         '''Check numbers is designed to see if the Lat, and Long points fall within the state boundries of Okalhoma.'''
-        df = pd.DataFrame({
-           'Lat': [95.2, 94.3, 97.8],
-           'Long': [38.2, 32.5, 34.1]}
-        target = pd.DataFrame({
-           'Lat': [95.3, 93.1, 97.0],
-           'Long': [39.1, 32.6, 34.1]})
+        df = pd.DataFrame({'Lat': [95.2, 94.3, 97.8], 'Long': [38.2, 32.5, 34.1]})
+        target = pd.DataFrame({'Lat': [95.3, 93.1, 97.0],'Long': [39.1, 32.6, 34.1]})
         df = df.apply(prep.checknumbers)
         assertEqual(target, df)
 
@@ -38,7 +35,7 @@ class Testprep(unittest.TestCase):
         or if 0 for good or if 0 No Data.'''
         df = pd.DataFrame({'duplicate_check': ['good', 'pos_dup', 'No Data']})
         target = pd.DataFrame({'duplicate_check': [0, 1, 0]})
-        df['duplicate_check'] = df['duplicate_check'].apply(prep.labels)
+        df['duplicate_check'] = df['duplicate_check'].apply(prep.prep.labels)
         assertEqual(target, df)
 
 if __name__ == '__main__':
