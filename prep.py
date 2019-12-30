@@ -33,20 +33,20 @@ def prep(df):
     1 or 0. 
     '''
     df = df[['OBJECTID', 'PROPNAME', 'ADDRESS', 'RESNAME', 'Lat', 'Long', 'duplicate_check']]
-    def labels(duplicate_check):
-        '''This method is to be applied to the dataframe df, that has a column duplicate_check in it.
-        This is being used to convert poss_dup to 1 or good to 0. Later this will be expanded to cover anything else
-        within the dataset.'''
-        if duplicate_check == 'good':
-            return 0
-        elif duplicate_check == 'poss_dup':
-            return 1
-        elif duplicate_check == 'No Data':
-            return 0
-        else:
-            return 0
-    df['duplicate_check'] = df['duplicate_check'].apply(labels)
     return df
+
+def labels(x):
+    '''This method is to be applied to the dataframe df, that has a column duplicate_check in it.
+    This is being used to convert poss_dup to 1 or good to 0. Later this will be expanded to cover anything else
+    within the dataset.'''
+    if duplicate_check == 'good':
+        return 0
+    elif duplicate_check == 'poss_dup':
+        return 1
+    elif duplicate_check == 'No Data':
+        return 0
+    else:
+        return 0
 
 def saver(df):
     '''This method is designed to ask the user if they want to save and if so where.
@@ -70,5 +70,6 @@ if __name__ == '__main__':
     data_frame = start()
     data_frame = fill_empty(data_frame)
     data_frame = prep(data_frame)
+    data_frame['duplicate_check'] = data_frame['duplicate_check'].apply(labels)
     data_frame.head()
     saver(data_frame)
