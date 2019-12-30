@@ -39,13 +39,13 @@ def labels(x):
     '''This method is to be applied to the dataframe df, that has a column duplicate_check in it.
     This is being used to convert poss_dup to 1 or good to 0. Later this will be expanded to cover anything else
     within the dataset.'''
-    if duplicate_check == 'good':
-        return 0
-    elif duplicate_check == 'poss_dup':
+    if x == 'pos_dup':
         return 1
-    elif duplicate_check == 'No Data':
+    elif x == 'poss_dup':
+        return 1
+    elif x == 'good':
         return 0
-    else:
+    elif x == 'No Data':
         return 0
 
 def saver(df):
