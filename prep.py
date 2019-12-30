@@ -41,7 +41,11 @@ def prep(df):
             return 0
         elif duplicate_check == 'poss_dup':
             return 1
-    df['duplicate_check'].apply(labels)
+        elif duplicate_check == 'No Data':
+            return 0
+        else:
+            return 0
+    df['duplicate_check'] = df['duplicate_check'].apply(labels)
     return df
 
 def saver(df):
