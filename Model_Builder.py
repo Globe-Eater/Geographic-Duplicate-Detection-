@@ -29,9 +29,9 @@ def fetch_batch(epoch, batch_index, batch_size):
     Usage- This takes the number of epochs defined later, the batch index and the size
     and randomly selects a subset of the dataset. It then cuts the indices and returns it to the model."""
     np.random.seed(epoch * n_batches + batch_index)
-    indices = np.random.randint(m, size=batch_size)
+    indices = np.random.randint(label_count, size=batch_size)
     X_batch = X_train[indices]
-    Y_batch = y_train.reshape(-1, 1)[indices]
+    y_batch = y_train.reshape(-1, 1)[indices]
     return X_batch, y_batch
 
 if __name__ == '__main__':
@@ -49,31 +49,27 @@ if __name__ == '__main__':
     X_train = preprocess(X_train)
     X_test = preprocess(X_test)
 
-    n = X_train.shape
-    
     # Construction Phase for TF
     feature_count = X_train.shape[0]
     label_count = y_train.shape[0]
 
-    training_epochs = 10 # This will absoutely be played with during testing.
+    n_epochs = 1000 # This will absoutely be played with during testing.
     learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
-    hidden_layers = feature_count - 1
-    cost_history = np.empty(shape=[1], dtype=float)
 
     X = tf.placeholder(tf.float32, shape=(None, feature_count), name="X")
-    Y = tf.placeholder(tf.float32, shape=(None, label_count), name="Y")
-    theta = tf.Variable(tf.random_uniform([n + 1, 1], -1.0, 1.0, seed=42), name="theta")
+    y = tf.placeholder(tf.float32, shape=(None, label_count), name="Y")
+    theta = tf.Variable(tf.random_uniform([feature_count, 1], -1.0, 1.0, seed=42), name="theta")
     y_pred = tf.matmul(X, theta, name="predictions")
     error = y_pred - y
     mse = tf.reduce_mean(tf.square(error), name="mse")
-    optimizer = tf.trainGradientDescentOptimizer(learning_rate=learning_rate)
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
     training_op = optimizer.minimize(mse)
 
     init = tf.global_variables_initializer()
     # save = tf.train.Saver() Turn this on when ready!
 
-    batch_size = 100
-    n_batches = int(np.ceil(m / batch_size))
+    batch_size = 50
+    n_batches = int(np.ceil(label_count / batch_size))
 
     # Run TF
     with tf.Session() as sess:
@@ -81,7 +77,7 @@ if __name__ == '__main__':
 
         for epoch in range(n_epochs):
             for batch_index in range(n_batches):
-                X_batch, y_batch = fetch_batch(epcoh, batch_index, batch_size)
+                X_batch, y_batch = fetch_batch(epoch, batch_index, batch_size)
                 sess.run(training_op, feed_dict={X: X_batch, y: y_batch})
 
         best_theta = theta.eval()
