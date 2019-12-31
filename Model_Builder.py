@@ -29,9 +29,9 @@ def fetch_batch(epoch, batch_index, batch_size):
     Usage- This takes the number of epochs defined later, the batch index and the size
     and randomly selects a subset of the dataset. It then cuts the indices and returns it to the model."""
     np.random.seed(epoch * n_batches + batch_index)
-    indices = np.random.randint(label_count, size=batch_size)
+    indices = np.random.randint(feature_count, size=batch_size)
     X_batch = X_train[indices]
-    y_batch = y_train.reshape(-1, 1)[indices]
+    y_batch = y_train.values.reshape(-1, 1)[indices]
     return X_batch, y_batch
 
 if __name__ == '__main__':
