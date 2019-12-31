@@ -9,6 +9,7 @@ from prep import start
 
 def preprocess(df):
     """This method takes the target dataframe and preprocesses it into vectors for the Algorithm to handle.
+     Will return a CRS sparse matrix for the matrix operations to be calulated on in the Tensorflow graph.
     """
     df = df[['PROPNAME', 'ADDRESS', 'RESNAME']]
 
@@ -17,21 +18,23 @@ def preprocess(df):
         ngrams = zip(*[string[i:] for i in range(n)])
         return [''.join(ngram) for ngram in ngrams]
 
-    def vectorize(x):
-        """ This takes a dataframe that is of strings only and converts them into vectors. """
+    def vectorize(df):
+        """ This takes a dataframe that is of strings only and converts them into vectors.
+       The output of this funciton is a crs sparse matrix."""
         vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams)
-        return vectorizer.fit_transform(x)
+        tf_idf_matrix = []
+        for i in df:
+            text = df[i]
+            tf_idf_matrix.append(vectorizer.fit_transform(text))
+        return tf_idf_matrix
 
     def cosine(x):
         ''' X is the input for values in a dataframe for this function. The output is the cosine similarity between
-        all X values in the dataframe.'''
+        all X values in the matrix.'''
         return cosine_similarity(x)
 
-    # Convert to vectors
-    df = df.apply(vectorize)
-    # Return output as a cosine similarity between all vectors
-    return df.apply(cosine)
-
+    tf_idf_matrix = vectorize(df)
+    return similarity_matrix = cosine(tf_idf_matrix)
 
 def fetch_batch(epoch, batch_index, batch_size):
     """This is for mini-batch gradient descent. 
