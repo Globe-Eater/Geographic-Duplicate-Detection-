@@ -31,7 +31,11 @@ def fetch_batch(epoch, batch_index, batch_size):
     np.random.seed(epoch * n_batches + batch_index)
     indices = np.random.randint(feature_count, size=batch_size)
     X_batch = X_train[indices]
+    print(X_batch)
+    print(type(X_batch))
     y_batch = y_train.values.reshape(-1, 1)[indices]
+    print(y_batch)
+    print(type(y_batch))
     return X_batch, y_batch
 
 if __name__ == '__main__':
@@ -50,8 +54,8 @@ if __name__ == '__main__':
     X_test = preprocess(X_test)
 
     # Construction Phase for TF
-    feature_count = X_train.shape[0]
-    label_count = y_train.shape[0]
+    feature_count = X_train.shape[0] # 3
+    label_count = y_train.shape[0]   # 555
 
     n_epochs = 1000 # This will absoutely be played with during testing.
     learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
