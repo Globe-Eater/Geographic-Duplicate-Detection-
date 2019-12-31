@@ -43,7 +43,8 @@ def fetch_batch(epoch, batch_index, batch_size):
     y_batch = y_train.values.reshape(-1, 1)[indices]
     return X_batch, y_batch
 
-if __name__ == '__main__':
+def main():
+    ''' This method builds the model to detect duplicate records in the OLI data.'''
     df = start()
 
     # Train_set, Testing_Set split:
@@ -57,7 +58,6 @@ if __name__ == '__main__':
     # Convert to Vectors
     X_train = preprocess(X_train)
     X_test = preprocess(X_test)
-    print(X_train)
 
     # Construction Phase for TF
     feature_count = X_train.shape[0] # 3
@@ -93,3 +93,6 @@ if __name__ == '__main__':
         best_theta = theta.eval()
 
     print(best_theta)
+
+if __name__ == '__main__':
+    main()
