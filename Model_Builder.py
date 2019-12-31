@@ -28,13 +28,18 @@ def preprocess(df):
             tf_idf_matrix.append(vectorizer.fit_transform(text))
         return tf_idf_matrix
 
-    def cosine(x):
+    def cosine(tf_idf_matrix):
         ''' X is the input for values in a dataframe for this function. The output is the cosine similarity between
         all X values in the matrix.'''
-        return cosine_similarity(x)
+        similarity_matrix = []
+        for i in tf_idf_matrix:
+            comparison = tf_idf_matrix[i]
+            similarity_matrix.append(cosine_similarity(comparison))
+        return similarity_matrix
 
     tf_idf_matrix = vectorize(df)
-    return similarity_matrix = cosine(tf_idf_matrix)
+    similarity_matrix = cosine(tf_idf_matrix)
+    return similarity_matrix
 
 def fetch_batch(epoch, batch_index, batch_size):
     """This is for mini-batch gradient descent. 
@@ -63,8 +68,8 @@ def main():
     X_test = preprocess(X_test)
 
     # Construction Phase for TF
-    feature_count = X_train.shape[0] # 3
-    label_count = y_train.shape[0]   # 555
+    feature_count = X_train.shape[0]
+    label_count = y_train.shape[0]
 
     n_epochs = 1000 # This will absoutely be played with during testing.
     learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
