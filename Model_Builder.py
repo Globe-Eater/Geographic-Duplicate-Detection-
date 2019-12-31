@@ -1,8 +1,8 @@
 import re
 import numpy as np
-import sklearn as sk
 import pandas as pd
 import tensorflow as tf
+from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from prep import start
@@ -22,7 +22,16 @@ def preprocess(df):
         vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams)
         return vectorizer.fit_transform(x)
 
-    return df.apply(vectorize)
+    def cosine(x):
+        ''' X is the input for values in a dataframe for this function. The output is the cosine similarity between
+        all X values in the dataframe.'''
+        return cosine_similarity(x)
+
+    # Convert to vectors
+    df = df.apply(vectorize)
+    # Return output as a cosine similarity between all vectors
+    return df.apply(cosine)
+
 
 def fetch_batch(epoch, batch_index, batch_size):
     """This is for mini-batch gradient descent. 
@@ -31,11 +40,7 @@ def fetch_batch(epoch, batch_index, batch_size):
     np.random.seed(epoch * n_batches + batch_index)
     indices = np.random.randint(feature_count, size=batch_size)
     X_batch = X_train[indices]
-    print(X_batch)
-    print(type(X_batch))
     y_batch = y_train.values.reshape(-1, 1)[indices]
-    print(y_batch)
-    print(type(y_batch))
     return X_batch, y_batch
 
 if __name__ == '__main__':
@@ -52,6 +57,7 @@ if __name__ == '__main__':
     # Convert to Vectors
     X_train = preprocess(X_train)
     X_test = preprocess(X_test)
+    print(X_train)
 
     # Construction Phase for TF
     feature_count = X_train.shape[0] # 3
