@@ -40,17 +40,8 @@ def preprocess(df):
     tf_idf_matrix = vectorize(df)
     #return tf_idf_matrix
     similarity_matrix = cosine(tf_idf_matrix)
+    similarity_matrix = np.array(similarity_matrix)
     return similarity_matrix
-
-def fetch_batch(epoch, batch_index, batch_size):
-    """This is for mini-batch gradient descent. 
-    Usage- This takes the number of epochs defined later, the batch index and the size
-    and randomly selects a subset of the dataset. It then cuts the indices and returns it to the model."""
-    np.random.seed(epoch * n_batches + batch_index)
-    indices = np.random.randint(feature_count, size=batch_size)
-    X_batch = X_train[indices]
-    y_batch = y_train.values.reshape(-1, 1)[indices]
-    return X_batch, y_batch
 
 def main():
     ''' This method builds the model to detect duplicate records in the OLI data.'''
@@ -72,7 +63,7 @@ def main():
     feature_count = X_train.shape[0]
     label_count = y_train.shape[0]
 
-    n_epochs = 1000 # This will absoutely be played with during testing.
+    n_epochs = 10 # This will absoutely be played with during testing.
     learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
 
     X = tf.placeholder(tf.float32, shape=(None, feature_count), name="X")
@@ -87,8 +78,18 @@ def main():
     init = tf.global_variables_initializer()
     # save = tf.train.Saver() Turn this on when ready!
 
-    batch_size = 50
+    batch_size = 100
     n_batches = int(np.ceil(label_count / batch_size))
+
+    def fetch_batch(epoch, batch_index, batch_size):
+        """This is for mini-batch gradient descent. 
+        Usage- This takes the number of epochs defined later, the batch index and the size
+        and randomly selects a subset of the dataset. It then cuts the indices and returns it to the model."""
+        np.random.seed(epoch * n_batches + batch_index)
+        indices = np.random.randint(feature_count, size=batch_size)
+        X_batch = X_train[indices]
+        y_batch = y_train.values.reshape(-1, 1)[indices]
+        return X_batch, y_batch
 
     # Run TF
     with tf.Session() as sess:
