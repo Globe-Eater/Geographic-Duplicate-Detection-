@@ -2,9 +2,9 @@ import re
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 from prep import start
 
 def preprocess(df):
@@ -33,11 +33,12 @@ def preprocess(df):
         all X values in the matrix.'''
         similarity_matrix = []
         for i in tf_idf_matrix:
-            comparison = tf_idf_matrix[i]
-            similarity_matrix.append(cosine_similarity(comparison))
+            for x in i:
+            	similarity_matrix.append(cosine_similarity(x))
         return similarity_matrix
 
     tf_idf_matrix = vectorize(df)
+    #return tf_idf_matrix
     similarity_matrix = cosine(tf_idf_matrix)
     return similarity_matrix
 
