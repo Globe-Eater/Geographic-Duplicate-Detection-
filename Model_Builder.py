@@ -81,7 +81,7 @@ def main():
     training_op = optimizer.minimize(mse)
     
     init = tf.global_variables_initializer()
-    # save = tf.train.Saver() Turn this on when ready!
+    saver = tf.train.Saver() # This will save the model
     
     batch_size = 100
     n_batches = int(np.ceil(feature_count / batch_size))
@@ -99,13 +99,16 @@ def main():
     # Run TF
     with tf.Session() as sess:
         sess.run(init)
-    
+        '''if epoch % 100 == 0:   This goes in here somewhere.
+                    print("Epoch", epoch, "MSE = ", mse.eval())
+                    save_path = saver.save(sess, "tmp/my_model.ckpt")'''
         for epoch in range(n_epochs):
             for batch_index in range(n_batches):
                 X_batch, y_batch = fetch_batch(epoch, batch_index, batch_size)
                 sess.run(training_op, feed_dict={X: X_batch, y: y_batch})
     
         best_theta = theta.eval()
+        save_path = saver.save(sess, "saved_models/my_model_final.ckpt")
     
     print(best_theta)
 
