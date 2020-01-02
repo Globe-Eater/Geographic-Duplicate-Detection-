@@ -1,6 +1,7 @@
 from datetime import datetime
 import re
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from scipy.sparse import hstack
 from sklearn.model_selection import train_test_split
@@ -132,7 +133,8 @@ def main():
     
     file_writer.flush()
     file_writer.close()
-    print(best_theta)
+    output = pd.DataFrame(pd.np.column_stack([Eval_ObjectID, best_theta]))
+    output.to_excel('Prediction.xlsx')
 
 if __name__ == '__main__':
    main()
