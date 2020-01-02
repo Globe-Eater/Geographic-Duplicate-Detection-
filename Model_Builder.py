@@ -1,6 +1,5 @@
 import re
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 from scipy.sparse import hstack
 from sklearn.model_selection import train_test_split
@@ -46,79 +45,69 @@ def preprocess(df):
     #similarity_matrix = np.array(similarity_matrix)
     #return similarity_matrix
 
-#def main():
-''' This method builds the model to detect duplicate records in the OLI data.'''
-df = start()
+def main():
+    ''' This method builds the model to detect duplicate records in the OLI data.'''
+    df = start()
+    
+    # Train_set, Testing_Set split:
+    X = df[['OBJECTID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
+    y = df[['duplicate_check']]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Handle Object ID,
+    Eval_ObjectID = X_test['OBJECTID']
+    
+    # Convert to Vectors
+    X_train = preprocess(X_train)
+    X_test = preprocess(X_test)
+    
+    # Construction Phase for TF
+    feature_count = X_train.shape[0]
+    
+    # THE OLD COLLEGE TRY WORKED!!! This is the (dataframe, college_try) shape. 
+    # college_try is the shape of the TD-IDF_vector. 
+    college_try = X_train.shape[1]
+    
+    n_epochs = 10 # This will absoutely be played with during testing.
+    learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
+    
+    X = tf.placeholder(tf.float32, shape=(None, college_try), name="X")
+    y = tf.placeholder(tf.float32, shape=(None, 1), name="Y")
+    theta = tf.Variable(tf.random_uniform([college_try, 1], -1.0, 1.0, seed=42), name="theta")
+    y_pred = tf.matmul(X, theta, name="predictions")
+    error = y_pred - y
+    mse = tf.reduce_mean(tf.square(error), name="mse")
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
+    training_op = optimizer.minimize(mse)
+    
+    init = tf.global_variables_initializer()
+    # save = tf.train.Saver() Turn this on when ready!
+    
+    batch_size = 100
+    n_batches = int(np.ceil(feature_count / batch_size))
+    
+    def fetch_batch(epoch, batch_index, batch_size):
+        """This is for mini-batch gradient descent. 
+        Usage- This takes the number of epochs defined later, the batch index and the size
+        and randomly selects a subset of the dataset. It then cuts the indices and returns it to the model."""
+        np.random.seed(epoch * n_batches + batch_index)
+        indices = np.random.randint(feature_count, size=batch_size)
+        X_batch = X_train[indices]
+        y_batch = df['duplicate_check'].values.reshape(-1, 1)[indices]
+        return X_batch, y_batch
+    
+    # Run TF
+    with tf.Session() as sess:
+        sess.run(init)
+    
+        for epoch in range(n_epochs):
+            for batch_index in range(n_batches):
+                X_batch, y_batch = fetch_batch(epoch, batch_index, batch_size)
+                sess.run(training_op, feed_dict={X: X_batch, y: y_batch})
+    
+        best_theta = theta.eval()
+    
+    print(best_theta)
 
-# Train_set, Testing_Set split:
-X = df[['OBJECTID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
-y = df[['duplicate_check']]
-print(y.head())
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Handle Object ID,
-Eval_ObjectID = X_test['OBJECTID']
-
-# Convert to Vectors
-X_train = preprocess(X_train)
-X_test = preprocess(X_test)
-
-# Construction Phase for TF
-feature_count = X_train.shape[0]
-label_count = y_train.shape[0]
-college_try = X_train.shape[1]
-
-# Shapes of all the features and lables
-print(X_train.shape, "x_train")
-print(y_train.shape, "y_train")
-print(X_test.shape, "x_test")
-print(y_test.shape, "y_test")
-print(feature_count, "feature_count") # 1665
-print(label_count, "label_count")     # 555
-print(df.shape)
-
-n_epochs = 10 # This will absoutely be played with during testing.
-learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
-
-X = tf.placeholder(tf.float32, shape=(None, college_try), name="X")
-print(X)
-y = tf.placeholder(tf.float32, shape=(None, 1), name="Y")
-print(y)
-theta = tf.Variable(tf.random_uniform([label_count, 1], -1.0, 1.0, seed=42), name="theta")
-y_pred = tf.matmul(X, theta, name="predictions")
-error = y_pred - y
-mse = tf.reduce_mean(tf.square(error), name="mse")
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
-training_op = optimizer.minimize(mse)
-
-init = tf.global_variables_initializer()
-# save = tf.train.Saver() Turn this on when ready!
-
-batch_size = 100
-n_batches = int(np.ceil(feature_count / batch_size))
-
-def fetch_batch(epoch, batch_index, batch_size):
-    """This is for mini-batch gradient descent. 
-    Usage- This takes the number of epochs defined later, the batch index and the size
-    and randomly selects a subset of the dataset. It then cuts the indices and returns it to the model."""
-    np.random.seed(epoch * n_batches + batch_index)
-    indices = np.random.randint(feature_count, size=batch_size)
-    X_batch = X_train[indices]
-    y_batch = df['duplicate_check'].values.reshape(-1, 1)[indices]
-    return X_batch, y_batch
-
-# Run TF
-with tf.Session() as sess:
-    sess.run(init)
-
-    for epoch in range(n_epochs):
-        for batch_index in range(n_batches):
-            X_batch, y_batch = fetch_batch(epoch, batch_index, batch_size)
-            sess.run(training_op, feed_dict={X: X_batch, y: y_batch})
-
-    best_theta = theta.eval()
-
-print(best_theta)
-
-#if __name__ == '__main__':
-#   main()
+if __name__ == '__main__':
+   main()
