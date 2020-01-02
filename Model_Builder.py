@@ -56,37 +56,41 @@ def main():
     
     df = start()
     
+    # Handle Object ID,
+    Eval_ObjectID = df['OBJECTID']
+    
+    # Preprocess the data:
+    data = preprocess(df)
+    
+    # Shapes of Features (independent variables) and Labels (dependent variables)
+    feature_count = data.shape[0]
+    label_count = df['duplicate_check'].shape[0]
+    
+    # Here I am going to reverse the dimensions of X_train as a new variable:
+    data_plus_bias = np.c_[np.ones((feature_count, 1)), data]
+    data_plus_bias = np.transpose(data_plus_bias)
+    
     # Train_set, Testing_Set split:
-    X = df[['OBJECTID', 'PROPNAME', 'RESNAME', 'ADDRESS', 'Lat', 'Long']]
+    X = data
     y = df[['duplicate_check']]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
-    # Handle Object ID,
-    Eval_ObjectID = X_test['OBJECTID']
-    
-    # Convert to Vectors
-    X_train = preprocess(X_train)
-    X_test = preprocess(X_test)
-    
-    # Construction Phase for TF
-    feature_count = X_train.shape[0]
-    
+        
     # THE OLD COLLEGE TRY WORKED!!! This is the (dataframe, college_try) shape. 
     # college_try is the shape of the TD-IDF_vector. 
-    college_try = X_train.shape[1]
+    #college_try = X_train.shape[1]
     
     n_epochs = 10 # This will absoutely be played with during testing.
     learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
     
-    X = tf.placeholder(tf.float32, shape=(None, college_try), name="X")
+    X = tf.placeholder(tf.float32, shape=(None, label_count), name="X")
     y = tf.placeholder(tf.float32, shape=(None, 1), name="Y")
-    theta = tf.Variable(tf.random_uniform([college_try, 1], -1.0, 1.0, seed=42), name="theta")
+    theta = tf.Variable(tf.random_uniform([label_count, 1], -1.0, 1.0, seed=42), name="theta")
     y_pred = tf.matmul(X, theta, name="predictions")
     
     with tf.name_scope("loss") as scope:
         error = y_pred - y
         mse = tf.reduce_mean(tf.square(error), name="mse")
-
+    
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
     training_op = optimizer.minimize(mse)
     
@@ -104,7 +108,7 @@ def main():
         and randomly selects a subset of the dataset. It then cuts the indices and returns it to the model."""
         np.random.seed(epoch * n_batches + batch_index)
         indices = np.random.randint(feature_count, size=batch_size)
-        X_batch = X_train[indices]
+        X_batch = data_plus_bias[indices]
         y_batch = df['duplicate_check'].values.reshape(-1, 1)[indices]
         return X_batch, y_batch
     
