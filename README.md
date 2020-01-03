@@ -6,7 +6,8 @@
     <li>Download the zip file, move to the convenient space and unzip.</li>
     <li>If anaconda has not been downloaded do so now. If it has run the following commands
     in the anaconda command prompt:</li>
-    ```
+
+    ```bash
        conda create env -f setup/enviorment.yml
        conda activate SHPO 
        conda list to see if you have tensorflow version 1.13
