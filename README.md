@@ -7,11 +7,9 @@
     <li>If anaconda has not been downloaded do so now. If it has run the following commands
     in the anaconda command prompt:</li>
 
-    ```
-       conda create env -f setup/enviorment.yml
-       conda activate SHPO 
-       conda list to see if you have tensorflow version 1.13
-    ```
+      > conda create env -f setup/enviorment.yml
+      > conda activate SHPO 
+      > conda list to see if you have tensorflow version 1.13
 </ol>
 
 ## Usage:
@@ -19,14 +17,14 @@ From the command line navigate to the directory that the convenient place is if 
 <p> These are the steps to produce an excel file with ObjectIDs and Predictions:
 <ol>
     <li>Making sure the enviroment is active by seeing (SHPO) on the left, run: </li>
-     `python prep.py`
+     > python prep.py
     <ul>
         <li>This will require an excel file that has been checked (for duplicates).</li>
         <li>Prep will ask for a path to a location for the data to be saved place it 
         in datasets/prepared_data/County_Name.xlsx</li>
     </ul>
     <li>Next you will run</li>
-    `python Classifier.py`
+    > python Classifier.py
     <ul>
         <li>This program will ask for your prepared dataset.</li>
         <li>It will then generate an xlsx file of ObjectID and its Prediction. </li>
