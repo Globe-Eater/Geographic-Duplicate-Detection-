@@ -14,6 +14,12 @@ def preprocess(df):
      Will return a CRS sparse matrix for the matrix operations to be calulated on in the Tensorflow graph.
     """
     df = df[['PROPNAME', 'ADDRESS', 'RESNAME']]
+    
+    # Thank you to Alexander at 
+    for col in df:
+        df[col] = [np.nan if (not isinstance(val, str) and np.isnan(val)) else
+          (val if isinstance(val, str) else str(int(val)))
+          for val in df[col].tolist()]
 
     def ngrams(string, n=3):
         string = re.sub(r',-./&',r'', string)
@@ -62,7 +68,8 @@ def main():
     
     # Preprocess the data:
     data = preprocess(df)
-    
+    print('Preprocessing Complete.')
+
     # Shapes of Features (independent variables) and Labels (dependent variables)
     feature_count = data.shape[0]
     label_count = df['duplicate_check'].shape[0]
@@ -75,12 +82,8 @@ def main():
     X = data
     y = df[['duplicate_check']]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        
-    # THE OLD COLLEGE TRY WORKED!!! This is the (dataframe, college_try) shape. 
-    # college_try is the shape of the TD-IDF_vector. 
-    #college_try = X_train.shape[1]
     
-    n_epochs = 10 # This will absoutely be played with during testing.
+    n_epochs = 3000 # This will absoutely be played with during testing.
     learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
     
     X = tf.placeholder(tf.float32, shape=(None, label_count), name="X")
@@ -112,7 +115,8 @@ def main():
         X_batch = data_plus_bias[indices]
         y_batch = df['duplicate_check'].values.reshape(-1, 1)[indices]
         return X_batch, y_batch
-    
+
+    print('Tensorflow session starting.')
     # Run TF
     with tf.Session() as sess:
         sess.run(init)
@@ -134,7 +138,7 @@ def main():
     file_writer.flush()
     file_writer.close()
     output = pd.DataFrame(pd.np.column_stack([Eval_ObjectID, best_theta]))
-    output.to_excel('Prediction.xlsx')
+    output.to_excel('Evaluation.xlsx')
 
 if __name__ == '__main__':
    main()
