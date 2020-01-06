@@ -9,6 +9,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from prep import start
 
+tf.reset_default_graph()
+
 def preprocess(df):
     """This method takes the target dataframe and preprocesses it into vectors for the Algorithm to handle.
      Will return a CRS sparse matrix for the matrix operations to be calulated on in the Tensorflow graph.
@@ -83,7 +85,7 @@ def main():
     y = df[['duplicate_check']]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    n_epochs = 3000 # This will absoutely be played with during testing.
+    n_epochs = 1000 # This will absoutely be played with during testing.
     learning_rate = 0.01 # This value is set to low inorder to make sure the algorithm decends the gradient.
     
     X = tf.placeholder(tf.float32, shape=(None, label_count), name="X")
@@ -95,8 +97,9 @@ def main():
         error = y_pred - y
         mse = tf.reduce_mean(tf.square(error), name="mse")
     
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
-    training_op = optimizer.minimize(mse)
+    with tf.name_scope("train"):
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
+        training_op = optimizer.minimize(mse)
     
     init = tf.global_variables_initializer()
     mse_summary = tf.summary.scalar('MSE', mse)

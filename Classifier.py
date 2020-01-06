@@ -7,7 +7,6 @@ from Model_Builder import preprocess
 #def main():
 '''This program will predict duplicate records that are input into it.
 Requires: prepared data from prep.py.
-
 Output: an excel file of objectID and prediction.
 '''
 
@@ -44,9 +43,9 @@ with tf.Session() as sess:
 
 output = pd.DataFrame(pd.np.column_stack([Eval_ObjectID, prediction]))
 output = output.rename(columns=({0: 'OBJECTID', 1: 'Prediction'}))
-df.merge(output, on=['OBJECTID'], how='left')
-df.sort_values(by=['duplicate_check'], ascending=False)
-df.to_excel('Prediction.xlsx')
+result = df.merge(output, on=['OBJECTID'], how='left')
+result = df.sort_values(by=['duplicate_check'], ascending=False)
+result.to_excel('Prediction.xlsx')
 
 #if __name__ == '__main__':
 #    main()
