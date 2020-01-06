@@ -10,8 +10,7 @@ def fill_empty(df):
     '''fill_empty takes the arugment df (dataframe)
     This should be used with apply.
     For example:
-        df = fill_empty(df)
-    '''
+        df = fill_empty(df)'''
     df = df.replace(r'^\s*$', np.nan, regex=True)
     df = df.fillna(value="No Data")
     return df
@@ -25,28 +24,27 @@ def check_numbers(lat, long):
     pass
 
 def prep(df):
-    '''prep is used for vectorizing the data 
-    so that it can be used in a machine learning model.
+    '''prep is used for vectorizing the data so that it can be used
+    in a machine learning model.
     Dev Notes:
     Order of OPS:
     Convert fields like duplicate_check from text to
-    1 or 0. 
-    '''
+    1 or 0.'''
     df = df[['OBJECTID', 'PROPNAME', 'ADDRESS', 'RESNAME', 'Lat', 'Long', 'duplicate_check']]
     return df
 
 def labels(x):
     '''This method is to be applied to the dataframe df, that has a column duplicate_check in it.
-    This is being used to convert poss_dup to 1 or good to 0. Later this will be expanded to cover anything else
-    within the dataset.'''
+    This is being used to convert poss_dup to 1 or good to 0. Later this will be expanded to cover
+    anything else within the dataset.'''
     if x == 'pos_dup':
-        return 1
-    elif x == 'poss_dup':
         return 1
     elif x == 'good':
         return 0
     elif x == 'No Data':
         return 0
+    else:
+        return 'No Data'
 
 def saver(df):
     '''This method is designed to ask the user if they want to save and if so where.
@@ -67,9 +65,9 @@ def saver(df):
                 print("Path was not found please try again")
 
 if __name__ == '__main__':
-    data_frame = start()
-    data_frame = fill_empty(data_frame)
-    data_frame = prep(data_frame)
-    data_frame['duplicate_check'] = data_frame['duplicate_check'].apply(labels)
-    data_frame.head()
-    saver(data_frame)
+    dataframe = start()
+    dataframe = fill_empty(dataframe)
+    dataframe = prep(dataframe)
+    dataframe['duplicate_check'] = dataframe['duplicate_check'].apply(labels)
+    dataframe.head()
+    saver(dataframe)
