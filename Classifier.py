@@ -12,6 +12,8 @@ Output: an excel file of objectID and prediction.
 
 df = start()
 
+#df = df[df.OBJECTID == 82852]
+
 # Handle Object ID,
 Eval_ObjectID = df['OBJECTID']
 
@@ -40,6 +42,12 @@ with tf.Session() as sess:
     saver.restore(sess, "saved_models/model_final.ckpt")
     init.run()
     prediction = theta.eval(feed_dict={X: data})
+
+
+# Going to slice the Eval_ObjectID to merge with the size of the trained predictions.
+size = prediction.shape
+size = size[0]
+Eval_ObjectID = Eval_ObjectID[:size] 
 
 output = pd.DataFrame(pd.np.column_stack([Eval_ObjectID, prediction]))
 output = output.rename(columns=({0: 'OBJECTID', 1: 'Prediction'}))
