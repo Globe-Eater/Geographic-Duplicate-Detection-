@@ -44,7 +44,7 @@ def labels(x):
     elif x == 'No Data':
         return 0
     else:
-        return 'No Data'
+        return 0
 
 def saver(df):
     '''This method is designed to ask the user if they want to save and if so where.
