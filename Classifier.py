@@ -45,9 +45,9 @@ with tf.Session() as sess:
 
 
 # Going to slice the Eval_ObjectID to merge with the size of the trained predictions.
-size = prediction.shape
-size = size[0]
-Eval_ObjectID = Eval_ObjectID[:size] 
+#size = prediction.shape
+#size = size[0]
+#Eval_ObjectID = Eval_ObjectID[:size] 
 
 output = pd.DataFrame(pd.np.column_stack([Eval_ObjectID, prediction]))
 output = output.rename(columns=({0: 'OBJECTID', 1: 'Prediction'}))
