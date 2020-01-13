@@ -3,7 +3,7 @@ import pandas as pd
 
 def start():
     '''This method is designed to read input in from the user.'''
-    df = pd.read_excel(input("Please enter the path for the data:"))
+    df = pd.read_excel("datasets/unprepared_data/" + input("Please enter the path for the data:"))
     return df
 
 def fill_empty(df):
